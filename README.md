@@ -73,26 +73,15 @@ canary ./my-app --min medium --fail-on high
 
 Running against the bundled vulnerable example:
 
-```
-$ canary examples/vulnerable_app/
+![canary scan output](docs/scan-output.png)
 
-canary — scanned 1 file(s)
-Critical: 1  High: 1  Medium: 1
+Machine-readable JSON for CI consumption (`--format json`):
 
-[CRITICAL] OpenAI API key hardcoded in source  (CANARY-SEC-001)
-   examples/vulnerable_app/app.py:15
-   > openai.api_key = "sk-p******************************************3456"
-   why: A credential appears to be committed directly in the code...
-   fix: Move the secret to an environment variable or a secret manager...
-   ref: CWE-798
+![canary JSON output](docs/scan-json.png)
 
-[HIGH] User input concatenated directly into a prompt  (CANARY-PI-001)
-   examples/vulnerable_app/app.py:23
-   > system_prompt = f"You are a helpful assistant. Answer this: {user_input}"
-   why: A prompt is built by interpolating a variable into a template...
-   fix: Keep the system instruction separate from user content...
-   ref: CWE-94
-```
+The scan exits non-zero when findings meet the `--fail-on` threshold, so it gates a build:
+
+![canary CI exit code](docs/scan-ci.png)
 
 ## Use in CI
 
