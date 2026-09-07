@@ -18,23 +18,35 @@ from __future__ import annotations
 
 import ast
 import re
-from typing import Iterable
+from collections.abc import Iterable
 
 from ..findings import Finding, Severity
 from .base import Detector, register
 
-# Names that suggest a value is destined for an LLM prompt.
+# Names that suggest a value is destined for an LLM prompt. Deliberately
+# narrow: "message" alone matched error strings and UI text in the v0.1
+# benchmark, which produced far more noise than signal.
 _PROMPT_HINTS = re.compile(
-    r"(prompt|message|messages|system_?prompt|user_?input|query|instruction)",
+    r"(prompt|instruction|system_?(message|msg|text)|persona|template)",
     re.IGNORECASE,
 )
 
-# Calls/attributes that commonly carry untrusted input.
-_TAINT_SOURCES = re.compile(
-    r"(request\.(json|form|args|data|values)|input\s*\(|sys\.argv|"
-    r"req\.body|req\.query|os\.environ\.get\(\s*['\"](?!.*KEY).*['\"]\))",
+# Names of interpolated values that look like they carry untrusted input.
+# A prompt that interpolates `today` or `model_name` is not injection; one
+# that interpolates `user_input`, `question` or `request.json[...]` is.
+_INPUT_HINTS = re.compile(
+    r"(user|input|query|question|request|req\b|body|text|content|message|msg|prompt|"
+    r"document|doc\b|docs|data|payload|args|form|comment|review|email|"
+    r"transcript|history|context|memor|search|result|page|html|file|upload)",
     re.IGNORECASE,
 )
+
+
+_JS_PROMPT_TARGET = re.compile(
+    r"(const|let|var|this\.)?\s*\w*(prompt|instruction|systemMessage|systemText|template)\w*\s*[=:]",
+    re.IGNORECASE,
+)
+_JS_SYSTEM_ROLE = re.compile(r"role\s*:\s*['\"]system['\"]", re.IGNORECASE)
 
 
 @register
@@ -60,12 +72,10 @@ class PromptInjectionDetector(Detector):
             # Assignment where target name looks prompt-related and value
             # mixes a literal with a variable (f-string or + concatenation).
             if isinstance(node, ast.Assign):
-                target_names = [
-                    t.id for t in node.targets if isinstance(t, ast.Name)
-                ]
+                target_names = [t.id for t in node.targets if isinstance(t, ast.Name)]
                 if not any(_PROMPT_HINTS.search(n) for n in target_names):
                     continue
-                if self._value_mixes_input(node.value):
+                if self._value_mixes_input(node.value) and self._interpolates_input(node.value):
                     line = node.lineno
                     snippet = lines[line - 1].strip() if line - 1 < len(lines) else ""
                     yield Finding(
@@ -95,9 +105,7 @@ class PromptInjectionDetector(Detector):
         """True if value is an f-string with interpolation or a + concat
         that includes a non-constant (i.e. a variable)."""
         if isinstance(value, ast.JoinedStr):  # f-string
-            return any(
-                isinstance(v, ast.FormattedValue) for v in value.values
-            )
+            return any(isinstance(v, ast.FormattedValue) for v in value.values)
         if isinstance(value, ast.BinOp) and isinstance(value.op, ast.Add):
             return self._contains_name(value)
         return False
@@ -105,13 +113,35 @@ class PromptInjectionDetector(Detector):
     def _contains_name(self, node: ast.AST) -> bool:
         return any(isinstance(n, ast.Name) for n in ast.walk(node))
 
+    def _interpolates_input(self, value: ast.AST) -> bool:
+        """True if at least one interpolated expression looks like untrusted
+        input, by name (user_input, question, request.json, ...)."""
+        for n in ast.walk(value):
+            if isinstance(n, ast.Name) and n.id.isupper():
+                continue  # SYSTEM_PROMPT, TEMPLATE: a constant, not input
+            if isinstance(n, ast.Name) and _INPUT_HINTS.search(n.id):
+                return True
+            if isinstance(n, ast.Attribute) and _INPUT_HINTS.search(n.attr):
+                return True
+            if isinstance(n, ast.Call):
+                name = getattr(n.func, "id", None) or getattr(n.func, "attr", "")
+                if name in {"input", "get", "getenv"} or _INPUT_HINTS.search(name or ""):
+                    return True
+        return False
+
     # ---- JS/TS: regex-based ----
     def _scan_js_like(self, file_path: str, content: str) -> Iterable[Finding]:
         for i, line in enumerate(content.splitlines(), start=1):
-            if not _PROMPT_HINTS.search(line):
+            stripped = line.lstrip()
+            if stripped.startswith(("//", "*", "/*")):
+                continue
+            # The *target* must be prompt-like: `const prompt = ...`,
+            # `systemPrompt: ...`, `role: "system", content: ...`.
+            if not (_JS_PROMPT_TARGET.search(line) or _JS_SYSTEM_ROLE.search(line)):
                 continue
             # template literal with interpolation: `...${...}...`
-            if re.search(r"`[^`]*\$\{[^}]+\}[^`]*`", line):
+            m = re.search(r"`[^`]*\$\{([^}]+)\}[^`]*`", line)
+            if m and _INPUT_HINTS.search(m.group(1)):
                 yield Finding(
                     rule_id="CANARY-PI-002",
                     title="Template literal interpolated into a prompt",

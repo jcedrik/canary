@@ -8,20 +8,21 @@ central list to keep in sync.
 from __future__ import annotations
 
 import abc
-from typing import Iterable, Type
+from collections.abc import Iterable
+from typing import Type
 
 from ..findings import Finding
 
-_REGISTRY: list[Type["Detector"]] = []
+_REGISTRY: list[Type[Detector]] = []
 
 
-def register(cls: Type["Detector"]) -> Type["Detector"]:
+def register(cls: Type[Detector]) -> Type[Detector]:
     """Class decorator. Adds a detector to the global registry."""
     _REGISTRY.append(cls)
     return cls
 
 
-def all_detectors() -> list["Detector"]:
+def all_detectors() -> list[Detector]:
     """Instantiate every registered detector."""
     return [cls() for cls in _REGISTRY]
 

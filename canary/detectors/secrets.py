@@ -9,7 +9,7 @@ recognizable prefix to keep false positives low.
 from __future__ import annotations
 
 import re
-from typing import Iterable
+from collections.abc import Iterable
 
 from ..findings import Finding, Severity
 from .base import Detector, register
@@ -19,25 +19,25 @@ _SECRET_PATTERNS = [
     (
         "CANARY-SEC-001",
         "OpenAI API key",
-        re.compile(r"sk-(?!ant-)(proj-)?[A-Za-z0-9_\-]{20,}"),
+        re.compile(r"(?<![A-Za-z0-9_\-])sk-(?!ant-)(proj-)?[A-Za-z0-9_\-]{20,}"),
         Severity.CRITICAL,
     ),
     (
         "CANARY-SEC-002",
         "Anthropic API key",
-        re.compile(r"sk-ant-[A-Za-z0-9_\-]{20,}"),
+        re.compile(r"(?<![A-Za-z0-9_\-])sk-ant-[A-Za-z0-9_\-]{20,}"),
         Severity.CRITICAL,
     ),
     (
         "CANARY-SEC-003",
         "Google / GCP API key",
-        re.compile(r"AIza[0-9A-Za-z_\-]{35}"),
+        re.compile(r"(?<![A-Za-z0-9_\-])AIza[0-9A-Za-z_\-]{35}"),
         Severity.CRITICAL,
     ),
     (
         "CANARY-SEC-004",
         "AWS access key id",
-        re.compile(r"AKIA[0-9A-Z]{16}"),
+        re.compile(r"(?<![A-Za-z0-9])AKIA[0-9A-Z]{16}(?![A-Za-z0-9])"),
         Severity.CRITICAL,
     ),
     (
@@ -54,10 +54,21 @@ _SECRET_PATTERNS = [
 
 # Lines that are obviously placeholders, not real leaks.
 _PLACEHOLDER = re.compile(
-    r"(your[_\-]?(api[_\-]?)?key|xxx+|<.*>|example|placeholder|"
-    r"changeme|here|dummy|fake|test[_\-]?key|\.\.\.)",
+    r"(your[_\-][a-z0-9_\-]*key|your[_\-]?(api[_\-]?)?key|xxx+|<.*>|example|placeholder|"
+    r"changeme|here|dummy|fake|test[_\-]?key|\.\.\.|"
+    r"gitleaks:allow|pragma:\s*allowlist\s*secret|noqa:\s*S105|"
+    r"secret['\"]?\s*[:=]\s*['\"]?secret|"
+    r"\$\{?[A-Z_]{4,}\}?)",  # shell/env interpolation like ${API_KEY}
     re.IGNORECASE,
 )
+
+# Keys that are public by design. A PostHog project token (phc_...) is a
+# write-only analytics key meant to ship in client code; flagging it is noise.
+_KNOWN_PUBLIC = re.compile(r"\bphc_[A-Za-z0-9]{30,}\b")
+
+# A line this long is almost always data (base64 blobs, minified JS, cassette
+# payloads), not a credential assignment.
+_MAX_LINE = 400
 
 
 @register
@@ -67,8 +78,8 @@ class SecretsDetector(Detector):
 
     def scan_file(self, file_path: str, content: str) -> Iterable[Finding]:
         for i, line in enumerate(content.splitlines(), start=1):
-            if _PLACEHOLDER.search(line):
-                continue  # skip obvious dummy values
+            if len(line) > _MAX_LINE or _PLACEHOLDER.search(line) or _KNOWN_PUBLIC.search(line):
+                continue  # skip data blobs and obvious dummy values
             for rule_id, label, pattern, severity in _SECRET_PATTERNS:
                 m = pattern.search(line)
                 if not m:

@@ -5,8 +5,11 @@ Importing this package imports every detector module, which runs the
 side effect.
 """
 
-from . import prompt_injection  # noqa: F401
-from . import secrets  # noqa: F401
-from . import guardrails  # noqa: F401
+from . import (
+    excessive_agency,
+    guardrails,
+    prompt_injection,
+    secrets,
+)
 
-__all__ = ["prompt_injection", "secrets", "guardrails"]
+__all__ = ["excessive_agency", "guardrails", "prompt_injection", "secrets"]
