@@ -3,24 +3,74 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff
+      - run: ruff check canary tests
+      - run: ruff format --check canary tests
+
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install
-        run: pip install -e ".[dev]"
-      - name: Run tests
-        run: python -m pytest tests/ -v
-      - name: Self-scan (dogfood)
-        run: canary canary/ --fail-on critical
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest tests/ -v
+
+  # Dogfood: canary scans itself and the example app, and the findings land
+  # in this repo's Security tab. The example app is *supposed* to fail.
+  self-scan:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          path: canary/
+          fail-on: high
+          sarif-file: canary-self.sarif
+          version: source
+      - name: Example app must be caught
+        run: |
+          pip install -e .
+          if canary examples/vulnerable_app --fail-on high; then
+            echo "expected the vulnerable example to fail the gate" && exit 1
+          fi
+
+  publish:
+    # Publishes to PyPI on a version tag via trusted publishing.
+    # One-time setup: pypi.org -> project canary-sast -> Publishing -> add
+    # GitHub publisher (owner jcedrik, repo canary, workflow ci.yml, env pypi).
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [lint, test, self-scan]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build && python -m build
+      - uses: pypa/gh-action-pypi-publish@release/v1

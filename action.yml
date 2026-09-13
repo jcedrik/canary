@@ -1,0 +1,88 @@
+# Reusable GitHub Action.
+#
+#   - uses: jcedrik/canary@v0.2
+#     with:
+#       path: .
+#       fail-on: high
+#
+# Produces a SARIF file and uploads it to GitHub code scanning, so findings
+# show up in the Security tab and as PR annotations.
+name: "canary: LLM app security scan"
+description: "Static security scanner for LLM and AI-agent code (prompt injection, leaked keys, missing guardrails, PII in logs, excessive agency). Zero dependencies."
+author: "Jean-Cédrik Dorélas"
+branding:
+  icon: "shield"
+  color: "yellow"
+
+inputs:
+  path:
+    description: "File or directory to scan"
+    required: false
+    default: "."
+  fail-on:
+    description: "Fail the job if any finding is at or above this severity (info|low|medium|high|critical)"
+    required: false
+    default: "high"
+  min:
+    description: "Only report findings at or above this severity"
+    required: false
+    default: "info"
+  baseline:
+    description: "Optional path to a previous JSON report; findings in it are accepted"
+    required: false
+    default: ""
+  sarif-file:
+    description: "Where to write the SARIF report"
+    required: false
+    default: "canary.sarif"
+  upload-sarif:
+    description: "Upload the SARIF to GitHub code scanning (needs security-events: write)"
+    required: false
+    default: "true"
+  version:
+    description: "canary-sast version to install from PyPI (or 'source' to use this checkout)"
+    required: false
+    default: "0.2.0"
+
+outputs:
+  sarif-file:
+    description: "Path of the SARIF report"
+    value: ${{ inputs.sarif-file }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install canary
+      shell: bash
+      run: |
+        if [ "${{ inputs.version }}" = "source" ]; then
+          pip install -q "${{ github.action_path }}"
+        else
+          pip install -q "canary-sast==${{ inputs.version }}"
+        fi
+
+    - name: Scan (SARIF, never fails here so the upload always happens)
+      shell: bash
+      run: |
+        BASE=""
+        if [ -n "${{ inputs.baseline }}" ]; then BASE="--baseline ${{ inputs.baseline }}"; fi
+        canary "${{ inputs.path }}" --format sarif -o "${{ inputs.sarif-file }}" \
+          --min "${{ inputs.min }}" --fail-on "${{ inputs.fail-on }}" $BASE || true
+
+    - name: Upload to code scanning
+      if: inputs.upload-sarif == 'true'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.sarif-file }}
+        category: canary
+
+    - name: Gate the build
+      shell: bash
+      run: |
+        BASE=""
+        if [ -n "${{ inputs.baseline }}" ]; then BASE="--baseline ${{ inputs.baseline }}"; fi
+        canary "${{ inputs.path }}" --min "${{ inputs.min }}" --fail-on "${{ inputs.fail-on }}" $BASE
