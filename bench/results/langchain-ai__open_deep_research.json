@@ -1,0 +1,170 @@
+{
+  "files_scanned": 14,
+  "total_findings": 11,
+  "suppressed": 0,
+  "counts_by_severity": {
+    "Low": 11
+  },
+  "counts_by_rule": {
+    "CANARY-GR-001": 11
+  },
+  "counts_by_owasp": {
+    "LLM05": 11
+  },
+  "findings": [
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/open_deep_research/deep_researcher.py",
+      "line": 101,
+      "snippet": "response = await clarification_model.ainvoke([HumanMessage(content=prompt_content)])",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/open_deep_research/deep_researcher.py",
+      "line": 154,
+      "snippet": "response = await research_model.ainvoke([HumanMessage(content=prompt_content)])",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/open_deep_research/deep_researcher.py",
+      "line": 214,
+      "snippet": "response = await research_model.ainvoke(supervisor_messages)",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/open_deep_research/deep_researcher.py",
+      "line": 415,
+      "snippet": "response = await research_model.ainvoke(messages)",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/open_deep_research/utils.py",
+      "line": 194,
+      "snippet": "model.ainvoke([HumanMessage(content=prompt_content)]),",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/legacy/graph.py",
+      "line": 97,
+      "snippet": "results = await structured_llm.ainvoke([SystemMessage(content=system_instructions_query),",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/legacy/graph.py",
+      "line": 134,
+      "snippet": "report_sections = await structured_llm.ainvoke([SystemMessage(content=system_instructions_sections),",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/legacy/graph.py",
+      "line": 230,
+      "snippet": "queries = await structured_llm.ainvoke([SystemMessage(content=system_instructions),",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/legacy/graph.py",
+      "line": 307,
+      "snippet": "section_content = await writer_model.ainvoke([SystemMessage(content=section_writer_instructions),",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/legacy/graph.py",
+      "line": 338,
+      "snippet": "feedback = await reflection_model.ainvoke([SystemMessage(content=section_grader_instructions_formatted),",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/open_deep_research/src/legacy/graph.py",
+      "line": 387,
+      "snippet": "section_content = await writer_model.ainvoke([SystemMessage(content=system_instructions),",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    }
+  ]
+}

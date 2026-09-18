@@ -22,7 +22,7 @@ def ask():
     # CANARY-PI-001: user input spliced straight into the prompt
     system_prompt = f"You are a helpful assistant. Answer this: {user_input}"
 
-    # CANARY-GR-001: model call with no output validation/moderation
+    # CANARY-GR-001: raw model output is trusted as-is
     response = openai.chat.completions.create(
         model="gpt-4",
         messages=[{"role": "system", "content": system_prompt}],
@@ -38,3 +38,16 @@ def ask():
 
 if __name__ == "__main__":
     app.run()
+
+
+# ---- agent tool, CANARY-EA-001 ----
+# A tool the model is allowed to call. Whatever the model passes in `cmd`
+# runs on the host. This is the OWASP LLM06 "excessive agency" pattern.
+from langchain.tools import tool
+import subprocess
+
+
+@tool
+def run_command(cmd: str) -> str:
+    """Run a shell command and return its output."""
+    return subprocess.check_output(cmd, shell=True).decode()

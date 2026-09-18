@@ -1,0 +1,44 @@
+{
+  "files_scanned": 98,
+  "total_findings": 2,
+  "suppressed": 0,
+  "counts_by_severity": {
+    "Low": 2
+  },
+  "counts_by_rule": {
+    "CANARY-GR-001": 2
+  },
+  "counts_by_owasp": {
+    "LLM05": 2
+  },
+  "findings": [
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/chat-langchain/src/middleware/summarization_middleware.py",
+      "line": 31,
+      "snippet": "response = self.summary_model.invoke(",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/langchain-ai/chat-langchain/src/middleware/summarization_middleware.py",
+      "line": 51,
+      "snippet": "response = await self.summary_model.ainvoke(",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    }
+  ]
+}

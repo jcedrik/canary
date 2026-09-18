@@ -1,0 +1,12 @@
+# Public LLM / agent application repositories used for the benchmark.
+# Chosen to be applications (not SDKs), mostly Python, varied in size.
+https://github.com/google/adk-samples
+https://github.com/openai/openai-agents-python
+https://github.com/anthropics/anthropic-cookbook
+https://github.com/vanna-ai/vanna
+https://github.com/crewAIInc/crewAI-examples
+https://github.com/langchain-ai/chat-langchain
+https://github.com/Chainlit/cookbook
+https://github.com/pydantic/pydantic-ai
+https://github.com/mem0ai/mem0
+https://github.com/langchain-ai/open_deep_research

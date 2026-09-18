@@ -1,0 +1,112 @@
+[
+  {
+    "repo": "google/adk-samples",
+    "status": "ok",
+    "files_scanned": 1363,
+    "seconds": 7.21,
+    "total": 23,
+    "rule:CANARY-GR-001": 16,
+    "rule:CANARY-PI-001": 7,
+    "owasp:LLM01": 7,
+    "owasp:LLM05": 16
+  },
+  {
+    "repo": "openai/openai-agents-python",
+    "status": "ok",
+    "files_scanned": 578,
+    "seconds": 6.02,
+    "total": 5,
+    "rule:CANARY-GR-001": 4,
+    "rule:CANARY-PI-001": 1,
+    "owasp:LLM01": 1,
+    "owasp:LLM05": 4
+  },
+  {
+    "repo": "anthropics/anthropic-cookbook",
+    "status": "ok",
+    "files_scanned": 133,
+    "seconds": 0.94,
+    "total": 21,
+    "rule:CANARY-GR-001": 10,
+    "rule:CANARY-PI-001": 11,
+    "owasp:LLM01": 11,
+    "owasp:LLM05": 10
+  },
+  {
+    "repo": "vanna-ai/vanna",
+    "status": "ok",
+    "files_scanned": 319,
+    "seconds": 1.57,
+    "total": 33,
+    "rule:CANARY-GR-001": 25,
+    "rule:CANARY-PI-001": 8,
+    "owasp:LLM01": 8,
+    "owasp:LLM05": 25
+  },
+  {
+    "repo": "crewAIInc/crewAI-examples",
+    "status": "ok",
+    "files_scanned": 158,
+    "seconds": 0.26,
+    "total": 4,
+    "rule:CANARY-GR-001": 2,
+    "rule:CANARY-PII-001": 2,
+    "owasp:LLM02": 2,
+    "owasp:LLM05": 2
+  },
+  {
+    "repo": "langchain-ai/chat-langchain",
+    "status": "ok",
+    "files_scanned": 98,
+    "seconds": 0.54,
+    "total": 2,
+    "rule:CANARY-GR-001": 2,
+    "owasp:LLM05": 2
+  },
+  {
+    "repo": "Chainlit/cookbook",
+    "status": "ok",
+    "files_scanned": 142,
+    "seconds": 0.54,
+    "total": 25,
+    "rule:CANARY-GR-001": 24,
+    "rule:CANARY-PI-001": 1,
+    "owasp:LLM01": 1,
+    "owasp:LLM05": 24
+  },
+  {
+    "repo": "pydantic/pydantic-ai",
+    "status": "ok",
+    "files_scanned": 911,
+    "seconds": 9.95,
+    "total": 51,
+    "rule:CANARY-GR-001": 47,
+    "rule:CANARY-PI-001": 1,
+    "rule:CANARY-PII-001": 1,
+    "rule:CANARY-SEC-005": 2,
+    "owasp:LLM01": 1,
+    "owasp:LLM02": 3,
+    "owasp:LLM05": 47
+  },
+  {
+    "repo": "mem0ai/mem0",
+    "status": "ok",
+    "files_scanned": 809,
+    "seconds": 4.73,
+    "total": 47,
+    "rule:CANARY-GR-001": 41,
+    "rule:CANARY-PI-001": 4,
+    "rule:CANARY-PI-002": 2,
+    "owasp:LLM01": 6,
+    "owasp:LLM05": 41
+  },
+  {
+    "repo": "langchain-ai/open_deep_research",
+    "status": "ok",
+    "files_scanned": 14,
+    "seconds": 0.23,
+    "total": 11,
+    "rule:CANARY-GR-001": 11,
+    "owasp:LLM05": 11
+  }
+]

@@ -1,0 +1,75 @@
+{
+  "files_scanned": 158,
+  "total_findings": 4,
+  "suppressed": 0,
+  "counts_by_severity": {
+    "Medium": 2,
+    "Low": 2
+  },
+  "counts_by_rule": {
+    "CANARY-GR-001": 2,
+    "CANARY-PII-001": 2
+  },
+  "counts_by_owasp": {
+    "LLM02": 2,
+    "LLM05": 2
+  },
+  "findings": [
+    {
+      "rule_id": "CANARY-PII-001",
+      "title": "Possible sensitive data written to logs",
+      "severity": "Medium",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/crewAIInc/crewAI-examples/flows/email_auto_responder_flow/src/email_auto_responder_flow/utils/emails.py",
+      "line": 56,
+      "snippet": "print(email)",
+      "explanation": "A logging statement references what looks like personal data or raw model input/output. Logs are often shipped to third parties and retained long-term, so this can leak PII and violate Law 25 / GDPR.",
+      "remediation": "Redact or hash sensitive fields before logging. Log identifiers and metadata, never raw user content, credentials, or full prompts/responses.",
+      "category": "PII / Sensitive Data Logging",
+      "cwe": "CWE-532",
+      "owasp": "LLM02",
+      "owasp_title": "Sensitive Information Disclosure"
+    },
+    {
+      "rule_id": "CANARY-PII-001",
+      "title": "Possible sensitive data written to logs",
+      "severity": "Medium",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/crewAIInc/crewAI-examples/integrations/CrewAI-LangGraph/src/crew/crew.py",
+      "line": 31,
+      "snippet": "print(email)",
+      "explanation": "A logging statement references what looks like personal data or raw model input/output. Logs are often shipped to third parties and retained long-term, so this can leak PII and violate Law 25 / GDPR.",
+      "remediation": "Redact or hash sensitive fields before logging. Log identifiers and metadata, never raw user content, credentials, or full prompts/responses.",
+      "category": "PII / Sensitive Data Logging",
+      "cwe": "CWE-532",
+      "owasp": "LLM02",
+      "owasp_title": "Sensitive Information Disclosure"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/crewAIInc/crewAI-examples/integrations/nvidia_models/marketing_strategy/src/marketing_posts/llm.py",
+      "line": 92,
+      "snippet": "response = self.llm.invoke(**params)",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    },
+    {
+      "rule_id": "CANARY-GR-001",
+      "title": "LLM call with no visible output guardrail",
+      "severity": "Low",
+      "file_path": "/tmp/claude-0/-home-claude/15a37388-ad3f-5904-8de7-a8485a47baa4/scratchpad/bench_work/crewAIInc/crewAI-examples/integrations/nvidia_models/intro/main.py",
+      "line": 95,
+      "snippet": "response = self.llm.invoke(**params)",
+      "explanation": "A model is invoked but there is no nearby moderation, schema validation, or output filtering. Raw model output can contain injected instructions, unsafe content, or malformed data that downstream code trusts.",
+      "remediation": "Validate the model's output before using it: enforce a schema (e.g. Pydantic), run a moderation/safety check, and constrain it to an allowlist of expected actions.",
+      "category": "Missing Output Guardrails",
+      "cwe": "CWE-20",
+      "owasp": "LLM05",
+      "owasp_title": "Improper Output Handling"
+    }
+  ]
+}
