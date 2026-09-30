@@ -10,3 +10,6 @@ build/
 venv/
 .DS_Store
 *.egg
+bench/.work/
+.ruff_cache/
+*.sarif

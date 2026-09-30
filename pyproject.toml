@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "canary-scan"
-version = "0.1.0"
+name = "canary-sast"
+version = "0.2.0"
 description = "Static security scanner for LLM and AI-agent applications."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -38,3 +38,15 @@ canary = "canary.cli:main"
 [tool.setuptools.packages.find]
 include = ["canary*"]
 exclude = ["tests*", "examples*"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+# Keep `Optional[...]` / `Type[...]`: the package supports Python 3.9.
+ignore = ["UP006", "UP007", "UP035", "UP045", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402"]
