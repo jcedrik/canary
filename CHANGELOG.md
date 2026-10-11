@@ -2,6 +2,15 @@
 
 ## 0.2.0 (2026-10)
 
+**Release and validation chronology.** Development changes were committed with
+September 2026 author dates. The benchmark artifacts in this release were
+produced using repository snapshots obtained on October 10, 2026; they are
+October validation evidence, not evidence of a September benchmark run.
+GitHub Actions first ran on October 11, 2026, after the commits were pushed.
+The PyPI publication is also an October 2026 release event; consult the
+PyPI release history for its exact timestamp. These are distinct milestones:
+development, validation, CI execution, and distribution.
+
 The first release that was measured before it was shipped. `bench/` scans ten
 public LLM application repositories (adk-samples, openai-agents-python,
 anthropic-cookbook, vanna, crewAI-examples, chat-langchain, Chainlit cookbook,
